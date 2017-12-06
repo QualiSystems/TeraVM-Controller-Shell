@@ -1,0 +1,43 @@
+<Driver Description="Shell to setup and run TeraVM traffic" MainClass="driver.TeraVMControllerDriver"
+        Name="TeraVMControllerDriver" Version="1.0.0">
+    <Layout>
+        <Category Name="Hidden Commands">
+            <Command Name="keep_alive" DisplayName="Keep Alive" Tags="" Description="" EnableCancellation="true"/>
+            <Command Name="cleanup_reservation" DisplayName="Cleanup Reservation" Tags="" Description="" EnableCancellation="true"/>
+        </Category>
+        <Command Name="load_config" DisplayName="Load Configuration" Description="Reserve ports and load configuration">
+            <Parameters>
+                <Parameter Name="config_file_location" Type="String" Mandatory="True"
+                           DisplayName="TeraVM config file"
+                           Description="Full path to TeraVM test configuration file"/>
+            </Parameters>
+        </Command>
+        <Command Name="start_traffic" DisplayName="Start Traffic" Description="STart test for current configuration">
+            <Parameters>
+                <Parameter Name="blocking" Type="Lookup" Mandatory="False" AllowedValues="True,False"
+                           DisplayName="Block" Description="Block the command until all the traffic finish to run"
+                           DefaultValue="False"/>
+            </Parameters>
+        </Command>
+        <Command Name="stop_traffic" DisplayName="Stop Traffic" Description="Stop running test"/>
+        <Command Name="get_results" DisplayName="Get Result"
+                 Description="Get test result file and attach it to the reservation"/>
+        <Command Name="get_statistics" DisplayName="Get Statistics" Description="Get real time statistics">
+            <Parameters>
+                <Parameter Name="view_name" Type="Lookup" Mandatory="True"
+                           AllowedValues="summary, iface, l4stats, sslstats, ipsecstats, l7stats, clientstats, attackstats, gtp, resource"
+                           DisplayName="View Name" DefaultValue="summary"
+                           Description="Possible values: summary, iface, l4stats, sslstats, ipsecstats, l7stats, clientstats, attackstats, gtp, resource"/>
+                <Parameter Name="output_type" Type="Lookup" Mandatory="True" AllowedValues="csv,json"
+                           DisplayName="Output Type" DefaultValue="csv" Description="CSV or JSON"/>
+            </Parameters>
+        </Command>
+        <Command Name="get_test_file" DisplayName="Get Test File" Description="Download test file to the folder specified in the Test Files Location attribute">
+            <Parameters>
+                <Parameter Name="test_name" Type="String" Mandatory="True"
+                           DisplayName="Test Name"
+                           Description="Name of the Test"/>
+            </Parameters>
+        </Command>
+    </Layout>
+</Driver>

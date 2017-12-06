@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Version: 13.4, Build: 4623, Fri Dec 01 17:00:30 EET 2017-->
+<diversifEye>
+   <test_group>
+      <name>SuperTestGroup</name>
+      <description/>
+      <tce_normal_stats_sample_interval>Thirty Seconds</tce_normal_stats_sample_interval>
+      <tce_fine_stats_sample_interval>One Second</tce_fine_stats_sample_interval>
+      <group_normal_stats_sample_interval>Thirty Seconds</group_normal_stats_sample_interval>
+      <group_fine_stats_sample_interval>One Second</group_fine_stats_sample_interval>
+      <enable_thresholding>true</enable_thresholding>
+      <test_mode>Standard Mode</test_mode>
+      <enable_snmp_trap_sending_for_threshold_events>false</enable_snmp_trap_sending_for_threshold_events>
+      <snmp_target_ip_address/>
+      <snmp_target_port/>
+      <implicit_in_service_for_thr>true</implicit_in_service_for_thr>
+      <normalStatsEnabledForTestCards>true</normalStatsEnabledForTestCards>
+      <fineStatsEnabledForTestCards>false</fineStatsEnabledForTestCards>
+      <interface_selection_mode>Classic Mode</interface_selection_mode>
+      <traffic_direction>VLAN ID</traffic_direction>
+      <epcEnabled>false</epcEnabled>
+      <epc_ng40_ran_addresses/>
+      <configuration_folder>
+         <http_configuration_folder>
+            <http_request_lists>
+               <!--
+The following XML is for a Default HTTP Request. It is commented out and therefore it will be not imported.
+This HTTP Request can only be imported by uncommenting the XML and then changing the name so it does not match the default HTTP Resource name.
+<http_request_list>
+<name>Default MPEG-DASH Request</name>
+<description>Default MPEG-DASH Request List</description>
+<list>
+<request>
+<method>GET</method>
+<uri>/hdworld_dash/HDWorld.mpd</uri>
+<content_type/>
+<content_type_charset/>
+<content/>
+<body_part_list/>
+<header_field_list/>
+</request>
+</list>
+<selection_mode>Sequential</selection_mode>
+<zipfian_exponent/>
+</http_request_list>
+-->
+            </http_request_lists>
+            <http_resource_lists>
+               <!--
+The following XML is for a Default HTTP Resource. It is commented out and therefore it will be not imported.
+This HTTP Resource can only be imported by uncommenting the XML and then changing the name so it does not match the default HTTP Resource name.
+<http_resource_list>
+<name>Default MPEG-DASH Resource</name>
+<description>Default MPEG-DASH Resource List</description>
+<list>
+<resource>
+<type>File Resource</type>
+<path>/hdworld_dash/HDWorld.mpd</path>
+<value>HDWorld.mpd</value>
+</resource>
+<resource>
+<type>File Resource</type>
+<path>/hdworld_dash/HDWorld_init.mp4</path>
+<value>HDWorld_init.mp4</value>
+</resource>
+<resource>
+<type>Random Data</type>
+<path>/hdworld_dash/hdworld_seg_hdworld_0696kbps</path>
+<value>620000</value>
+</resource>
+<resource>
+<type>Random Data</type>
+<path>/hdworld_dash/hdworld_seg_hdworld_0996kbps</path>
+<value>1020000</value>
+</resource>
+<resource>
+<type>Random Data</type>
+<path>/hdworld_dash/hdworld_seg_hdworld_1896kbps</path>
+<value>1980000</value>
+</resource>
+<resource>
+<type>Random Data</type>
+<path>/hdworld_dash/hdworld_seg_hdworld_3596kbps</path>
+<value>3800000</value>
+</resource>
+<resource>
+<type>Random Data</type>
+<path>/hdworld_dash/hdworld_seg_hdworld_4496kbps</path>
+<value>4720000</value>
+</resource>
+</list>
+</http_resource_list>
+-->
+            </http_resource_lists>
+            <http_header_field_lists/>
+         </http_configuration_folder>
+      </configuration_folder>
+      <test_case>
+         <type>IP</type>
+         <thresholds/>
+         <aggregate_groups>
+            <aggregate_group>
+               <name>Default</name>
+               <description>Default Aggregate Group!</description>
+               <provisioning_mode>Single Aggregate Group per Row</provisioning_mode>
+               <enhanced_leave_statistics_enabled>false</enhanced_leave_statistics_enabled>
+               <connection_statistics_enabled>false</connection_statistics_enabled>
+               <extended_tcp_statistics_enabled>false</extended_tcp_statistics_enabled>
+               <latency_statistics_enabled>false</latency_statistics_enabled>
+               <response_code_statistics_enabled>false</response_code_statistics_enabled>
+               <dhcp_statistics_enabled>false</dhcp_statistics_enabled>
+               <pppoe_statistics_enabled>false</pppoe_statistics_enabled>
+               <rtp_statistics_enabled>false</rtp_statistics_enabled>
+               <udp_statistics_enabled>false</udp_statistics_enabled>
+               <aggregates>
+                  <aggregate>
+                     <type>Host</type>
+                     <is_normal_stats_enabled>true</is_normal_stats_enabled>
+                     <is_fine_stats_enabled>false</is_fine_stats_enabled>
+                  </aggregate>
+                  <aggregate>
+                     <type>HttpServer</type>
+                     <is_normal_stats_enabled>true</is_normal_stats_enabled>
+                     <is_fine_stats_enabled>false</is_fine_stats_enabled>
+                  </aggregate>
+               </aggregates>
+            </aggregate_group>
+         </aggregate_groups>
+         <hosts>
+            <direct_virtual_host>
+               <name>superHOST2</name>
+               <description/>
+               <provisioning_mode>Single Host per Row</provisioning_mode>
+               <administrative_state>Enabled</administrative_state>
+               <service_state>In Service</service_state>
+               <ip_address>20.20.20.20/24</ip_address>
+               <gateway_host/>
+               <initial_flow_label/>
+               <mtu_discovery>false</mtu_discovery>
+               <tcp_characteristics/>
+               <inbound_bandwidth_rate_limiter/>
+               <outbound_bandwidth_rate_limiter/>
+               <network_characteristics/>
+               <host_normal_stats_enabled>true</host_normal_stats_enabled>
+               <host_fine_stats_enabled>false</host_fine_stats_enabled>
+               <connection_stats_enabled>true</connection_stats_enabled>
+               <extended_tcp_stats_enabled>false</extended_tcp_stats_enabled>
+               <aggregate_group/>
+               <enable_start_after_delay>false</enable_start_after_delay>
+               <start_after_delay/>
+               <start_after_delay_metric/>
+               <enable_stop_after_time>false</enable_stop_after_time>
+               <stop_after_time/>
+               <stop_after_time_metric/>
+               <enable_activity_cycles>false</enable_activity_cycles>
+               <active_duration/>
+               <active_duration_metric/>
+               <enable_inactive_duration/>
+               <inactive_duration/>
+               <inactive_duration_metric/>
+               <block_all_traffic>false</block_all_traffic>
+               <route_type>None</route_type>
+               <secure_s1mme_interface>false</secure_s1mme_interface>
+               <layer_2_configuration>
+                  <interface>4/1/6</interface>
+                  <mac_address_assignment_mode>Use MAC of Assigned Interface</mac_address_assignment_mode>
+                  <seed_mac_address/>
+                  <mtu>1500</mtu>
+                  <link_layer_type>Ethernet</link_layer_type>
+                  <logical_port_vlan_id_enabled>false</logical_port_vlan_id_enabled>
+                  <vlan_tagging/>
+                  <vni/>
+               </layer_2_configuration>
+               <ip_assignment_type>Static</ip_assignment_type>
+               <dhcp_stats_enabled>false</dhcp_stats_enabled>
+               <pppoe_stats_enabled>false</pppoe_stats_enabled>
+               <enable_eap_authentication>false</enable_eap_authentication>
+               <is_pppoe_enabled>false</is_pppoe_enabled>
+               <rip_version>Disabled</rip_version>
+               <enable_voip_b2bua_support>false</enable_voip_b2bua_support>
+               <b2bua_sip_port/>
+               <epc_acts_as_enb>false</epc_acts_as_enb>
+               <epc_ng40_ran_number/>
+               <epc_associated_ng40_if_index/>
+            </direct_virtual_host>
+            <direct_virtual_host>
+               <name>SuperHost1</name>
+               <description/>
+               <provisioning_mode>Single Host per Row</provisioning_mode>
+               <administrative_state>Enabled</administrative_state>
+               <service_state>In Service</service_state>
+               <ip_address>10.10.10.10/24</ip_address>
+               <gateway_host/>
+               <initial_flow_label/>
+               <mtu_discovery>false</mtu_discovery>
+               <tcp_characteristics/>
+               <inbound_bandwidth_rate_limiter/>
+               <outbound_bandwidth_rate_limiter/>
+               <network_characteristics/>
+               <host_normal_stats_enabled>true</host_normal_stats_enabled>
+               <host_fine_stats_enabled>false</host_fine_stats_enabled>
+               <connection_stats_enabled>true</connection_stats_enabled>
+               <extended_tcp_stats_enabled>false</extended_tcp_stats_enabled>
+               <aggregate_group/>
+               <enable_start_after_delay>false</enable_start_after_delay>
+               <start_after_delay/>
+               <start_after_delay_metric/>
+               <enable_stop_after_time>false</enable_stop_after_time>
+               <stop_after_time/>
+               <stop_after_time_metric/>
+               <enable_activity_cycles>false</enable_activity_cycles>
+               <active_duration/>
+               <active_duration_metric/>
+               <enable_inactive_duration/>
+               <inactive_duration/>
+               <inactive_duration_metric/>
+               <block_all_traffic>false</block_all_traffic>
+               <route_type>None</route_type>
+               <secure_s1mme_interface>false</secure_s1mme_interface>
+               <layer_2_configuration>
+                  <interface>3/1/3</interface>
+                  <mac_address_assignment_mode>Use MAC of Assigned Interface</mac_address_assignment_mode>
+                  <seed_mac_address/>
+                  <mtu>1500</mtu>
+                  <link_layer_type>Ethernet</link_layer_type>
+                  <logical_port_vlan_id_enabled>false</logical_port_vlan_id_enabled>
+                  <vlan_tagging/>
+                  <vni/>
+               </layer_2_configuration>
+               <ip_assignment_type>Static</ip_assignment_type>
+               <dhcp_stats_enabled>false</dhcp_stats_enabled>
+               <pppoe_stats_enabled>false</pppoe_stats_enabled>
+               <enable_eap_authentication>false</enable_eap_authentication>
+               <is_pppoe_enabled>false</is_pppoe_enabled>
+               <rip_version>Disabled</rip_version>
+               <enable_voip_b2bua_support>false</enable_voip_b2bua_support>
+               <b2bua_sip_port/>
+               <epc_acts_as_enb>false</epc_acts_as_enb>
+               <epc_ng40_ran_number/>
+               <epc_associated_ng40_if_index/>
+            </direct_virtual_host>
+         </hosts>
+         <applications>
+            <http_server>
+               <name>superHttpServer</name>
+               <description/>
+               <administrative_state>Enabled</administrative_state>
+               <service_state>In Service</service_state>
+               <host>SuperHost1</host>
+               <transport_port>80</transport_port>
+               <qos>0</qos>
+               <start_after/>
+               <start_after_metric>ms</start_after_metric>
+               <stop_after/>
+               <stop_after_metric>secs</stop_after_metric>
+               <is_normal_stats_enabled>true</is_normal_stats_enabled>
+               <is_fine_stats_enabled>false</is_fine_stats_enabled>
+               <aggregate_group/>
+               <provisioning_mode>Single App per Row</provisioning_mode>
+               <tcp_characteristics/>
+               <enable_tls>false</enable_tls>
+               <tls_version/>
+               <resource_list>Default MPEG-DASH Resource</resource_list>
+               <response_delay>300</response_delay>
+               <response_delay_metric>ms</response_delay_metric>
+               <enable_extended_size_based_requests>false</enable_extended_size_based_requests>
+               <acws_domain_name/>
+               <certificates_config/>
+               <uri_substring>_ffmpeg</uri_substring>
+            </http_server>
+         </applications>
+      </test_case>
+   </test_group>
+</diversifEye>
