@@ -5,18 +5,30 @@ from cloudshell.devices.driver_helper import get_logger_with_thread_id
 from cloudshell.shell.core.driver_context import AutoLoadDetails
 from cloudshell.shell.core.resource_driver_interface import ResourceDriverInterface
 
-from traffic.teravm.controller.runners.load_config_runner import TeraVMLoadConfigurationRunner
 from traffic.teravm.controller.configuration_attributes_structure import TrafficGeneratorControllerResource
+from traffic.teravm.controller.runners.load_config_runner import TeraVMLoadConfigurationRunner
+from traffic.teravm.controller.runners.tvm_tests_runner import TeraVMTestsRunner
+from traffic.teravm.controller.runners.results_runner import TeraVMResultsRunner
+from traffic.teravm.controller.quali_rest_api_helper import create_quali_api_instance
 
 
 class TeraVMControllerDriver(ResourceDriverInterface):
 
+    def __init__(self):
+        super(TeraVMControllerDriver, self).__init__()
+        self._cli = None
+
     def initialize(self, context):
         """
+
         :param context: ResourceCommandContext,ReservationContextDetailsobject with all Resource Attributes inside
         :type context:  context: cloudshell.shell.core.driver_context.ResourceRemoteCommandContext
         """
-        pass
+        resource_config = TrafficGeneratorControllerResource.from_context(context)
+        session_pool_size = int(resource_config.sessions_concurrency_limit)
+        self._cli = get_cli(session_pool_size)
+
+        return 'Finished initializing'
 
     def get_inventory(self, context):
         """Autoload inventory. Return device structure with all standard attributes
@@ -27,96 +39,114 @@ class TeraVMControllerDriver(ResourceDriverInterface):
         return AutoLoadDetails([], [])
 
     def load_config(self, context, config_file_location):
-        """
-        Load configuration file and reserve ports
+        """Load configuration file and reserve ports
+
         :param context: 
         :param config_file_location: 
         :return: 
         """
         logger = get_logger_with_thread_id(context)
-        logger.info('Load configuration started')
+        logger.info('Load configuration command started')
 
         with ErrorHandlingContext(logger):
             cs_api = get_api(context)
-            resource_config = TrafficGeneratorControllerResource.from_context(context=context)
-            session_pool_size = int(resource_config.sessions_concurrency_limit)
-            cli = get_cli(session_pool_size)
-            # password = cs_api.DecryptPassword(resource_config.password).Value
-            #
+            reservation_id = context.reservation.reservation_id
+            resource_config = TrafficGeneratorControllerResource.create_from_chassis_resource(context=context,
+                                                                                              cs_api=cs_api)
+
             load_conf_runner = TeraVMLoadConfigurationRunner(resource_config=resource_config,
                                                              cs_api=cs_api,
-                                                             cli=cli,
+                                                             cli=self._cli,
+                                                             reservation_id=reservation_id,
                                                              logger=logger)
 
-            return load_conf_runner.load_configuration('test_file_location')
-            # self.logger.debug('API instance: {}'.format(self.api))
-            # reservation_id = self.context.reservation.reservation_id
+            response = load_conf_runner.load_configuration(config_file_location)
+            logger.info('Load configuration command ended')
 
-    def start_traffic(self, context, blocking):
+            return response
+
+    def start_traffic(self, context):
         """Start traffic
 
         :param context: the context the command runs on
         :type context: cloudshell.shell.core.driver_context.ResourceRemoteCommandContext
-        :param blocking:
         """
-        pass
+        logger = get_logger_with_thread_id(context)
+        logger.info('Start traffic command started')
+
+        with ErrorHandlingContext(logger):
+            cs_api = get_api(context)
+            resource_config = TrafficGeneratorControllerResource.create_from_chassis_resource(context=context,
+                                                                                              cs_api=cs_api)
+
+            test_runner = TeraVMTestsRunner(resource_config=resource_config,
+                                            cs_api=cs_api,
+                                            cli=self._cli,
+                                            logger=logger)
+
+            response = test_runner.start_tests()
+            logger.info('Start traffic command ended')
+
+            return response
 
     def stop_traffic(self, context):
-        """Stop traffic and unreserving ports
+        """Stop traffic and unreserve ports
 
         :param context: the context the command runs on
         :type context: cloudshell.shell.core.driver_context.ResourceRemoteCommandContext
         """
-        pass
+        logger = get_logger_with_thread_id(context)
+        logger.info('Stop traffic command started')
 
-    def get_statistics(self, context, view_name, output_type):
-        """Get real time statistics
+        with ErrorHandlingContext(logger):
+            cs_api = get_api(context)
+            resource_config = TrafficGeneratorControllerResource.create_from_chassis_resource(context=context,
+                                                                                              cs_api=cs_api)
 
-        :param context: 
-        :param view_name: 
-        :param output_type: 
-        :return: 
-        """
-        pass
+            test_runner = TeraVMTestsRunner(resource_config=resource_config,
+                                            cs_api=cs_api,
+                                            cli=self._cli,
+                                            logger=logger)
+
+            response = test_runner.stop_tests()
+            logger.info('Stop traffic command ended')
+
+            return response
 
     def get_results(self, context):
-        """
-        Attach result file to the reservation
-        :param context: 
-        :return: 
-        """
-        pass
+        """Attach result file to the reservation
 
-    def get_test_file(self, context, test_name):
-        """Download test file configuration and put to the folder defined in Test Files Location attribute
-
-        :param context: 
-        :param test_name: Name of the test
-        :return: 
+        :param context:
+        :return:
         """
-        pass
+        logger = get_logger_with_thread_id(context)
+        logger.info('Get results command started')
 
-    def cleanup_reservation(self, context):
-        """Clear reservation when it ends
+        with ErrorHandlingContext(logger):
+            cs_api = get_api(context)
+            reservation_id = context.reservation.reservation_id
+            resource_config = TrafficGeneratorControllerResource.create_from_chassis_resource(context=context,
+                                                                                              cs_api=cs_api)
 
-        :param context: 
-        :return: 
-        """
-        pass
+            quali_api_client = create_quali_api_instance(context, logger)
+            quali_api_client.login()
+
+            test_runner = TeraVMResultsRunner(resource_config=resource_config,
+                                              cs_api=cs_api,
+                                              cli=self._cli,
+                                              quali_api_client=quali_api_client,
+                                              reservation_id=reservation_id,
+                                              logger=logger)
+
+            response = test_runner.get_results()
+            logger.info('Get results command ended')
+
+            return response
 
     def cleanup(self):
         """
 
         :return: 
-        """
-        pass
-
-    def keep_alive(self, context, cancellation_context):
-        """
-
-        :param context:
-        :param cancellation_context:
-        :return:
         """
         pass
 
@@ -138,29 +168,47 @@ if __name__ == "__main__":
     context.resource.name = 'dsada'
     context.resource.fullname = 'TestAireOS'
     context.reservation = ReservationContextDetails()
-    context.reservation.reservation_id = 'test_id'
+    context.reservation.reservation_id = 'b18fb3d1-5f08-4002-9cf2-c519ac3edfa6'
     context.resource.attributes = {}
     context.resource.attributes['User'] = user
     context.resource.attributes['Password'] = password
     context.resource.attributes["CLI TCP Port"] = 22
     context.resource.attributes["CLI Connection Type"] = "ssh"
     context.resource.attributes["Sessions Concurrency Limit"] = 1
+    context.resource.attributes["Test Files Location"] = "/home/anthony/Downloads/"
     context.resource.address = address
 
     context.connectivity = mock.MagicMock()
-    context.connectivity.server_address = "192.168.85.48"
+    context.connectivity.server_address = "192.168.85.19"
 
     dr = TeraVMControllerDriver()
+    dr.initialize(context)
 
-    with mock.patch('__main__.get_api') as get_api:
-        get_api.return_value = type('api', (object,), {
-            'DecryptPassword': lambda self, pw: type('Password', (object,), {'Value': pw})()})()
+    # with mock.patch('__main__.get_api') as get_api:
+    #     get_api.return_value = type('api', (object,), {
+    #         'DecryptPassword': lambda self, pw: type('Password', (object,), {'Value': pw})()})()
+    #
+    #     # out = dr.get_inventory(context)
+    #     #
+    #     # for xx in out.resources:
+    #     #     print xx.__dict__
+    #
+    #     out = dr.load_config(context, "TestConfig.xml")
+    #
+    #     print(out)
+
+    # with mock.patch('__main__.get_api') as get_api:
+    #     get_api.return_value = type('api', (object,), {
+    #         'DecryptPassword': lambda self, pw: type('Password', (object,), {'Value': pw})()})()
 
         # out = dr.get_inventory(context)
-        #
-        # for xx in out.resources:
-        #     print xx.__dict__
+    #
+    # for xx in out.resources:
+    #     print xx.__dict__
 
-        out = dr.load_config(context, "test_conf_location")
+    # out = dr.load_config(context, "CS_TEST.xml")
+    out = dr.start_traffic(context)
+    # out = dr.stop_traffic(context)
+    # out = dr.get_results(context)
 
-        print(out)
+    print(out)

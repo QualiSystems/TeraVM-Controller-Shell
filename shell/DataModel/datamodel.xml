@@ -1,58 +1,112 @@
-﻿<DataModelInfo xmlns="http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DataModelInfo xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xmlns="http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd">
     <Attributes>
-        <AttributeInfo DefaultValue="" Description="The path in which the traffic client is installed on the Execution Server. For example 'C:/Program Files (x86)/Ixia/IxOS/6.90-EA'." IsReadOnly="false" Name="Client Install Path" Type="String">
+        <AttributeInfo DefaultValue=""
+                       Description="The path in which the traffic client is installed on the Execution Server. For example 'C:/Program Files (x86)/Ixia/IxOS/6.90-EA'."
+                       IsReadOnly="false" Name="Client Install Path" Type="String">
             <Rules>
-                <Rule Name="Configuration" />
+                <Rule Name="Configuration"/>
             </Rules>
         </AttributeInfo>
-        <AttributeInfo DefaultValue="" Description="The IP address of the traffic server. Relevant only in case an external server is configured." IsReadOnly="false" Name="Controller Address" Type="String">
+        <AttributeInfo DefaultValue=""
+                       Description="The IP address of the traffic server. Relevant only in case an external server is configured."
+                       IsReadOnly="false" Name="Controller Address" Type="String">
             <Rules>
-                <Rule Name="Configuration" />
+                <Rule Name="Configuration"/>
             </Rules>
         </AttributeInfo>
-        <AttributeInfo DefaultValue="" Description="The TCP port of the traffic server. Relevant only in case an external server is configured. Default TCP port should be used if kept empty." IsReadOnly="false" Name="Controller TCP Port" Type="String">
+        <AttributeInfo DefaultValue=""
+                       Description="The TCP port of the traffic server. Relevant only in case an external server is configured. Default TCP port should be used if kept empty."
+                       IsReadOnly="false" Name="Controller TCP Port" Type="String">
             <Rules>
-                <Rule Name="Configuration" />
+                <Rule Name="Configuration"/>
             </Rules>
         </AttributeInfo>
         <AttributeInfo DefaultValue="" Description="" IsReadOnly="false" Name="Password" Type="Password">
             <Rules>
-                <Rule Name="Configuration" />
+                <Rule Name="Configuration"/>
             </Rules>
         </AttributeInfo>
         <AttributeInfo DefaultValue="" Description="" IsReadOnly="false" Name="User" Type="String">
             <Rules>
-                <Rule Name="Configuration" />
+                <Rule Name="Configuration"/>
             </Rules>
         </AttributeInfo>
-        <AttributeInfo DefaultValue="" Description="Location for test related files" IsReadOnly="false" Name="Test Files Location" Type="String">
+        <AttributeInfo DefaultValue="" Description="Location for test related files" IsReadOnly="false"
+                       Name="Test Files Location" Type="String">
             <Rules>
-                <Rule Name="Configuration" />
+                <Rule Name="Configuration"/>
             </Rules>
         </AttributeInfo>
+        <AttributeInfo xsi:type="LookupAttributeDetails" Name="CLI Connection Type"
+                       Description="The CLI connection type that will be used by the driver. Possible values are Auto, Console, SSH, Telnet and TCP. If Auto is selected the driver will choose the available connection type automatically. Default value is Auto."
+                       Type="Lookup" DefaultValue="Auto"
+                       IsReadOnly="false" IsCommand="false">
+            <Rules Override="false">
+                <Rule Name="Configuration"/>
+            </Rules>
+            <LookupValues>
+                <LookupValue NumericValue="0" StringValue="Auto"/>
+                <LookupValue NumericValue="1" StringValue="Console"/>
+                <LookupValue NumericValue="2" StringValue="SSH"/>
+                <LookupValue NumericValue="3" StringValue="Telnet"/>
+                <LookupValue NumericValue="4" StringValue="TCP"/>
+            </LookupValues>
+        </AttributeInfo>
+        <AttributeInfo Name="CLI TCP Port"
+                       Description="TCP Port to user for CLI connection. If kept empty a default CLI port will be used based on the chosen protocol, for example Telnet will use port 23."
+                       Type="Numeric" DefaultValue="0" IsReadOnly="false">
+            <Rules Override="false">
+                <Rule Name="Configuration"/>
+            </Rules>
+        </AttributeInfo>
+        <AttributeInfo Name="Sessions Concurrency Limit"
+                       Description="The maximum number of concurrent sessions that the driver will open to the device. Default is 1 (no concurrency)."
+                       Type="Numeric" DefaultValue="1" IsReadOnly="false">
+            <Rules Override="false">
+                <Rule Name="Configuration"/>
+            </Rules>
+        </AttributeInfo>
+
     </Attributes>
 
     <ResourceFamilies>
         <ResourceFamily Description="" IsService="true" Name="Traffic Generator Controller" ServiceType="Regular">
             <AttachedAttributes>
                 <AttachedAttribute IsLocal="true" IsOverridable="true" Name="Test Files Location" UserInput="true">
-                    <AllowedValues />
+                    <AllowedValues/>
+                </AttachedAttribute>
+                <AttachedAttribute IsLocal="true" IsOverridable="true" Name="Client Install Path" UserInput="true">
+                    <AllowedValues/>
+                </AttachedAttribute>
+                <AttachedAttribute Name="User" IsOverridable="true" IsLocal="true"  UserInput="true">
+                    <AllowedValues/>
+                </AttachedAttribute>
+                <AttachedAttribute Name="Password" IsOverridable="true" IsLocal="true"  UserInput="true">
+                    <AllowedValues/>
+                </AttachedAttribute>
+                <AttachedAttribute IsLocal="true" IsOverridable="true" Name="Controller TCP Port"  UserInput="true">
+                    <AllowedValues/>
+                </AttachedAttribute>
+                <AttachedAttribute Name="CLI Connection Type" IsOverridable="true" IsLocal="true"  UserInput="true">
+                    <AllowedValues/>
+                </AttachedAttribute>
+                <AttachedAttribute Name="CLI TCP Port" IsOverridable="true" IsLocal="true"  UserInput="true">
+                    <AllowedValues/>
+                </AttachedAttribute>
+                <AttachedAttribute Name="Sessions Concurrency Limit" IsOverridable="true" IsLocal="true"  UserInput="true">
+                    <AllowedValues/>
                 </AttachedAttribute>
             </AttachedAttributes>
-            <Models><ResourceModel Description="TeraVM controller" Name="TeraVM Controller" SupportsConcurrentCommands="true">
-			<AttachedAttributes>
-        		<AttachedAttribute IsLocal="true" IsOverridable="true" Name="Client Install Path">
-            		<AllowedValues />
-          		</AttachedAttribute>
-        		<AttachedAttribute IsLocal="true" IsOverridable="true" Name="Controller TCP Port">
-            		<AllowedValues />
-          		</AttachedAttribute>
-			</AttachedAttributes>
-            <Drivers>
-                <DriverName>TeraVMControllerDriver</DriverName>
-            </Drivers>			
-        </ResourceModel>
-    </Models>
+            <Models>
+                <ResourceModel Description="TeraVM controller" Name="TeraVM Controller"
+                               SupportsConcurrentCommands="true">
+                    <Drivers>
+                        <DriverName>TeraVMControllerDriver</DriverName>
+                    </Drivers>
+                </ResourceModel>
+            </Models>
             <Categories>
                 <Category>Applications</Category>
             </Categories>
@@ -60,7 +114,7 @@
     </ResourceFamilies>
 
     <DriverDescriptors>
-        <DriverDescriptor DriverType="PythonDriver" Name="TeraVMControllerDriver" />
+        <DriverDescriptor DriverType="PythonDriver" Name="TeraVMControllerDriver"/>
     </DriverDescriptors>
 
 </DataModelInfo>

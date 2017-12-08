@@ -1,22 +1,23 @@
 from traffic.teravm.controller.cli.ctrl_handler import TeraVMControllerCliHandler
-from traffic.teravm.controller.flows.start_tests_flow import TeraVMStartTestsFlow
-from traffic.teravm.controller.flows.stop_tests_flow import TeraVMStopTestsFlow
+from traffic.teravm.controller.flows.results_flow import TeraVMGetResultsFlow
 from traffic.teravm.controller.constants import TEST_GROUP_NAME
 
 
-class TeraVMTestsRunner(object):
-    def __init__(self, cli, cs_api, resource_config, logger):
+class TeraVMResultsRunner(object):
+    def __init__(self, cli, cs_api, resource_config, reservation_id, quali_api_client, logger):
         """
 
         :param cloudshell.cli.cli.CLI cli: CLI object
         :param cloudshell.api.cloudshell_api.CloudShellAPISession cs_api: cloudshell API object
         :param traffic.teravm.controller.configuration_attributes_structure.TrafficGeneratorControllerResource resource_config:
+        :param traffic.teravm.quali_rest_api_helper.QualiAPIHelper quali_api_client:
         :param logging.Logger logger:
-        :return:
         """
         self._cli = cli
         self._cs_api = cs_api
         self._resource_config = resource_config
+        self._reservation_id = reservation_id
+        self._quali_api_client = quali_api_client
         self._logger = logger
 
     @property
@@ -31,31 +32,15 @@ class TeraVMTestsRunner(object):
                                           api=self._cs_api)
 
     @property
-    def start_tests_flow(self):
+    def get_results_flow(self):
         """
 
         :return:
         """
-        return TeraVMStartTestsFlow(cli_handler=self.cli_handler)
+        return TeraVMGetResultsFlow(cli_handler=self.cli_handler,
+                                    quali_api_client=self._quali_api_client,
+                                    reservation_id=self._reservation_id)
 
-    @property
-    def stop_tests_flow(self):
-        """
-
-        :return:
-        """
-        return TeraVMStopTestsFlow(cli_handler=self.cli_handler)
-
-    def start_tests(self):
-        """
-
-        :return:
-        """
-        return self.start_tests_flow.execute(test_group_name=TEST_GROUP_NAME, user=self._resource_config.test_user)
-
-    def stop_tests(self):
-        """
-
-        :return:
-        """
-        return self.stop_tests_flow.execute(test_group_name=TEST_GROUP_NAME, user=self._resource_config.test_user)
+    def get_results(self):
+        """"""
+        return self.get_results_flow.execute(test_group_name=TEST_GROUP_NAME, user=self._resource_config.test_user)

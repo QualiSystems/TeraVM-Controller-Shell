@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--Version: 13.4, Build: 4623, Fri Dec 01 17:00:30 EET 2017-->
+<!--Version: 13.4, Build: 4623, Wed Dec 20 16:10:26 EET 2017-->
 <diversifEye>
    <test_group>
-      <name>SuperTestGroup</name>
+      <name>CS_TEST_GROUP</name>
       <description/>
       <tce_normal_stats_sample_interval>Thirty Seconds</tce_normal_stats_sample_interval>
       <tce_fine_stats_sample_interval>One Second</tce_fine_stats_sample_interval>
@@ -128,13 +128,13 @@ This HTTP Resource can only be imported by uncommenting the XML and then changin
          </aggregate_groups>
          <hosts>
             <direct_virtual_host>
-               <name>superHOST2</name>
+               <name>t2</name>
                <description/>
                <provisioning_mode>Single Host per Row</provisioning_mode>
                <administrative_state>Enabled</administrative_state>
                <service_state>In Service</service_state>
-               <ip_address>20.20.20.20/24</ip_address>
-               <gateway_host/>
+               <ip_address>10.10.10.10/24</ip_address>
+               <gateway_host>t1</gateway_host>
                <initial_flow_label/>
                <mtu_discovery>false</mtu_discovery>
                <tcp_characteristics/>
@@ -162,7 +162,7 @@ This HTTP Resource can only be imported by uncommenting the XML and then changin
                <route_type>None</route_type>
                <secure_s1mme_interface>false</secure_s1mme_interface>
                <layer_2_configuration>
-                  <interface>4/1/6</interface>
+                  <interface>3/1/6</interface>
                   <mac_address_assignment_mode>Use MAC of Assigned Interface</mac_address_assignment_mode>
                   <seed_mac_address/>
                   <mtu>1500</mtu>
@@ -184,13 +184,13 @@ This HTTP Resource can only be imported by uncommenting the XML and then changin
                <epc_associated_ng40_if_index/>
             </direct_virtual_host>
             <direct_virtual_host>
-               <name>SuperHost1</name>
+               <name>t1</name>
                <description/>
                <provisioning_mode>Single Host per Row</provisioning_mode>
                <administrative_state>Enabled</administrative_state>
                <service_state>In Service</service_state>
-               <ip_address>10.10.10.10/24</ip_address>
-               <gateway_host/>
+               <ip_address>20.20.20.20/24</ip_address>
+               <gateway_host>t2</gateway_host>
                <initial_flow_label/>
                <mtu_discovery>false</mtu_discovery>
                <tcp_characteristics/>
@@ -218,7 +218,7 @@ This HTTP Resource can only be imported by uncommenting the XML and then changin
                <route_type>None</route_type>
                <secure_s1mme_interface>false</secure_s1mme_interface>
                <layer_2_configuration>
-                  <interface>3/1/3</interface>
+                  <interface>3/1/5</interface>
                   <mac_address_assignment_mode>Use MAC of Assigned Interface</mac_address_assignment_mode>
                   <seed_mac_address/>
                   <mtu>1500</mtu>
@@ -240,35 +240,7 @@ This HTTP Resource can only be imported by uncommenting the XML and then changin
                <epc_associated_ng40_if_index/>
             </direct_virtual_host>
          </hosts>
-         <applications>
-            <http_server>
-               <name>superHttpServer</name>
-               <description/>
-               <administrative_state>Enabled</administrative_state>
-               <service_state>In Service</service_state>
-               <host>SuperHost1</host>
-               <transport_port>80</transport_port>
-               <qos>0</qos>
-               <start_after/>
-               <start_after_metric>ms</start_after_metric>
-               <stop_after/>
-               <stop_after_metric>secs</stop_after_metric>
-               <is_normal_stats_enabled>true</is_normal_stats_enabled>
-               <is_fine_stats_enabled>false</is_fine_stats_enabled>
-               <aggregate_group/>
-               <provisioning_mode>Single App per Row</provisioning_mode>
-               <tcp_characteristics/>
-               <enable_tls>false</enable_tls>
-               <tls_version/>
-               <resource_list>Default MPEG-DASH Resource</resource_list>
-               <response_delay>300</response_delay>
-               <response_delay_metric>ms</response_delay_metric>
-               <enable_extended_size_based_requests>false</enable_extended_size_based_requests>
-               <acws_domain_name/>
-               <certificates_config/>
-               <uri_substring>_ffmpeg</uri_substring>
-            </http_server>
-         </applications>
+         <applications/>
       </test_case>
    </test_group>
 </diversifEye>

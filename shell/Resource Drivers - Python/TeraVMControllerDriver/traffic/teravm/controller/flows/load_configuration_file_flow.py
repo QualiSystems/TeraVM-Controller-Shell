@@ -1,68 +1,136 @@
 import os
+import tempfile
+import re
 
 from scp import SCPClient
 from xml.etree import ElementTree
+from traffic.teravm.controller.cli import ctrl_command_templates
+from cloudshell.cli.command_template.command_template_executor import CommandTemplateExecutor
+from traffic.teravm.controller import exceptions
+from traffic.teravm.controller import constants
 
 
 class TeraVMLoadConfigurationFlow(object):
-    TEST_GROUP_NAME = "CS_TEST_GROUP"  # todo: remove duplicate constant !!!
-
-    def __init__(self, cli_handler, resource_config, logger):
+    def __init__(self, cli_handler, resource_config, cs_api, reservation_id, logger):
         """
 
-        :param cli_handler:
-        :param resource_config:
-        :param logger:
+        :param traffic.teravm.controller.cli.ctrl_handler.TeraVMControllerCliHandler cli_handler:
+        :param traffic.teravm.controller.configuration_attributes_structure.TrafficGeneratorControllerResource resource_config:
+        :param str reservation_id:
+        :param logging.Logger logger:
         """
         self._cli_handler = cli_handler
         self._resource_config = resource_config
+        self._cs_api = cs_api
+        self._reservation_id = reservation_id
         self._logger = logger
 
-    def _replace_test_name(self, test_file_path):
-        tree = ElementTree.parse(test_file_path)
-        root = tree.getroot()
-        name = root.find('./test_group/name')
-        name.text = self.TEST_GROUP_NAME
+    def _get_ports_from_reservation(self):
+        """Get connected TeraVM ports from the reservation
 
-        # with open("filename", "w") as f:
-        #     f.write(ET.tostring(tree))
-        #
-        # temp_file_path = tempfile.mktemp()
-        # config.write(temp_file_path)
+        :rtype: dict[str, str]
+        """
+        ports = {}
+        resources = self._cs_api.GetReservationDetails(reservationId=self._reservation_id).ReservationDescription.Resources
+        port_pattern = r'{}/M(?P<module>\d+)/P(?P<port>\d+)'.format(self._resource_config.address)
+
+        for resource in resources:
+            if resource.ResourceModelName in constants.PORT_MODELS:
+                result = re.search(port_pattern, resource.FullAddress)
+                if result:
+                    logical_name = self._cs_api.GetAttributeValue(resourceFullPath=resource.Name,
+                                                                  attributeName=constants.PORT_LOGICAL_NAME_ATTR).Value
+                    if logical_name:
+                        interface_id = "/".join([result.group('module'),
+                                                 constants.TEST_AGENT_NUMBER,
+                                                 result.group('port')])
+
+                        ports[logical_name] = interface_id
+        return ports
 
     def execute_flow(self, file_path):
+        """
 
-        # todo step 2: replace test_name (we should import it later)
-        # todo step 3: get all interfaces from the file and reserve ports ??? magic happens there
+        :param str file_path: filename or full path to file
+        :return:
+        """
+        available_ports = self._get_ports_from_reservation()
 
-        file_path = self._get_existing_path(file_path)
+        file_path = self._get_test_file_path(file_path)
+        temp_file_path = self._prepare_temp_test_file(file_path=file_path,
+                                                      available_ports=available_ports)
 
-        test_group_file, user = "/home/cli/rr.xml", "admin"
+        test_group_file = constants.TEST_GROUP_FILE.format(self._resource_config.test_user)
 
         with self._cli_handler.get_cli_service(self._cli_handler.default_mode) as session:
             scp = SCPClient(session.session._handler.get_transport())
-            scp.put(file_path, "/home/cli/rr.xml")
 
-            # todo: execute this command before importing group "cli -u admin deleteTestGroup 11"
+            scp.put(temp_file_path, test_group_file)
 
             with session.enter_mode(self._cli_handler.cli_mode) as cli_session:
-                response = session.send_command(command="importTestGroup // {} -u {}".format(test_group_file, user))
-                print response
-                return response
+                try:
+                    command = CommandTemplateExecutor(cli_service=cli_session,
+                                                      command_template=ctrl_command_templates.DELETE_TEST_GROUP)
 
-    def _get_existing_path(self, file_path):
-        """Looking for existing path
+                    command.execute_command(test_group_name=constants.TEST_GROUP_NAME,
+                                            user=self._resource_config.test_user)
 
+                except exceptions.TestGroupDoesNotExist:
+                    pass
+
+                command = CommandTemplateExecutor(cli_service=cli_session,
+                                                  command_template=ctrl_command_templates.IMPORT_TEST_GROUP)
+
+                command.execute_command(test_group_file=test_group_file, user=self._resource_config.test_user)
+
+            command = CommandTemplateExecutor(cli_service=cli_session,
+                                              command_template=ctrl_command_templates.REMOVE_FILE)
+
+            command.execute_command(file_name=test_group_file)
+
+    def _get_test_file_path(self, file_path):
+        """Get full file path for test config
+
+        :param str file_path: filename or full path to file
         :rtype: str
         """
-        return "/home/anthony/Downloads/TestConfig.xml"
+        for path in (os.path.join(self._resource_config.test_files_location, file_path),
+                     os.path.join(self._resource_config.test_files_location, self._reservation_id, file_path),
+                     file_path):
 
-        search_order = [os.pтоath.join(self.context.resource.attributes.get('Test Files Location') or '', file_path),
-                        os.path.join(self.context.resource.attributes.get('Test Files Location') or '',
-                                     self.context.reservation.reservation_id, file_path), file_path]
-        for path in search_order:
             if os.path.exists(path):
                 return path
 
-        raise Exception('File {} does not exists or "Test Files Location" '
-                        'attribute was not specified'.format(file_path))
+        raise exceptions.TeraVMException('File {} does not exists or "Test Files Location" attribute '
+                                         'was not specified'.format(file_path))
+
+    def _prepare_temp_test_file(self, file_path, available_ports):
+        """Create test file in the temp directory and return its full path
+
+        :param str file_path:
+        :rtype: str
+        """
+        tree = ElementTree.parse(file_path)
+        root = tree.getroot()
+        name = root.find('./test_group/name')
+        name.text = constants.TEST_GROUP_NAME
+
+        missing_ports = []
+
+        for virtual_host in root.findall('.//direct_virtual_host'):
+            virtual_host_name = virtual_host.find('name').text.strip()
+            interface = virtual_host.find('.//interface')
+
+            if interface is not None:
+                if virtual_host_name in available_ports:
+                    interface.text = available_ports.pop(virtual_host_name)
+                else:
+                    missing_ports.append(virtual_host_name)
+
+        if missing_ports:
+            raise Exception('Ports with logical names {} are not present in the reservation'.format(missing_ports))
+
+        temp_file_path = tempfile.mktemp()
+        tree.write(temp_file_path)
+
+        return temp_file_path

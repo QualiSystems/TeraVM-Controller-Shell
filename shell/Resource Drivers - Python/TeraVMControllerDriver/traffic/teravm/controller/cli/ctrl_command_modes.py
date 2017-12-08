@@ -17,32 +17,17 @@ class DefaultCommandMode(CommandMode):
 class CliCommandMode(CommandMode):
     PROMPT = r'cli>'
     ENTER_COMMAND = 'cli'
-    EXIT_COMMAND = 'exit'
+    EXIT_COMMAND = '\x03'  # Ctrl-C code
 
     def __init__(self):
         super(CliCommandMode, self).__init__(
             CliCommandMode.PROMPT,
             CliCommandMode.ENTER_COMMAND,
             CliCommandMode.EXIT_COMMAND,
-            enter_action_map=self.enter_action_map(),
-            exit_action_map=self.exit_action_map(),
-            enter_error_map=self.enter_error_map(),
-            exit_error_map=self.exit_error_map())
-
-    def enter_actions(self, cli_operations):
-        pass
-
-    def enter_action_map(self):
-        return OrderedDict()
+            enter_error_map=self.enter_error_map())
 
     def enter_error_map(self):
-        return OrderedDict()
-
-    def exit_action_map(self):
-        return OrderedDict()
-
-    def exit_error_map(self):
-        return OrderedDict()
+        return OrderedDict((('command not found', 'TeraVM CLI is not installed'),))
 
 
 CommandMode.RELATIONS_DICT = {
@@ -50,10 +35,3 @@ CommandMode.RELATIONS_DICT = {
         CliCommandMode: {}
     }
 }
-
-
-# ERROR_MAP = OrderedDict({r'Could not check out the required':
-#                              'Failed to acquire teravm license',
-#                          r'command not found': 'command not found',
-#                          r'NullPointerException': 'NullPointerException',
-#                          r'DiversifEyeException': 'DiversifEyeException'})
