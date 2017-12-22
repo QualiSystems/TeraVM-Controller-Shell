@@ -76,7 +76,7 @@ class TrafficGeneratorControllerResource(object):
         :param str reservation_id:
         :return:
         """
-        return re.sub("[^0-9a-zA-Z]", "", reservation_id)
+        return re.sub("[^0-9a-zA-Z]", "", reservation_id)[:32]
 
     @staticmethod
     def get_chassis_model(cs_api, reservation_id):

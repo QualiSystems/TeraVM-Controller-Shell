@@ -9,6 +9,7 @@ from traffic.teravm.controller.configuration_attributes_structure import Traffic
 from traffic.teravm.controller.runners.load_config_runner import TeraVMLoadConfigurationRunner
 from traffic.teravm.controller.runners.tvm_tests_runner import TeraVMTestsRunner
 from traffic.teravm.controller.runners.results_runner import TeraVMResultsRunner
+from traffic.teravm.controller.runners.cleanup_runner import TeraVMCleanupRunner
 from traffic.teravm.controller.quali_rest_api_helper import create_quali_api_instance
 
 
@@ -143,6 +144,30 @@ class TeraVMControllerDriver(ResourceDriverInterface):
 
             return response
 
+    def cleanup_reservation(self, context):
+        """Stop traffic and delete test group
+
+        :param context: the context the command runs on
+        :type context: cloudshell.shell.core.driver_context.ResourceRemoteCommandContext
+        """
+        logger = get_logger_with_thread_id(context)
+        logger.info('Cleanup reservation command started')
+
+        with ErrorHandlingContext(logger):
+            cs_api = get_api(context)
+            resource_config = TrafficGeneratorControllerResource.create_from_chassis_resource(context=context,
+                                                                                              cs_api=cs_api)
+
+            cleanup_runner = TeraVMCleanupRunner(resource_config=resource_config,
+                                                 cs_api=cs_api,
+                                                 cli=self._cli,
+                                                 logger=logger)
+
+            response = cleanup_runner.cleanup_reservation()
+            logger.info('Cleanup reservation command ended')
+
+            return response
+
     def cleanup(self):
         """
 
@@ -168,7 +193,7 @@ if __name__ == "__main__":
     context.resource.name = 'dsada'
     context.resource.fullname = 'TestAireOS'
     context.reservation = ReservationContextDetails()
-    context.reservation.reservation_id = 'b18fb3d1-5f08-4002-9cf2-c519ac3edfa6'
+    context.reservation.reservation_id = '7ae6d4ac-4b7b-4e13-a52e-1d15f05af42e'
     context.resource.attributes = {}
     context.resource.attributes['User'] = user
     context.resource.attributes['Password'] = password
@@ -179,7 +204,7 @@ if __name__ == "__main__":
     context.resource.address = address
 
     context.connectivity = mock.MagicMock()
-    context.connectivity.server_address = "192.168.85.19"
+    context.connectivity.server_address = "192.168.85.11"
 
     dr = TeraVMControllerDriver()
     dr.initialize(context)
@@ -210,5 +235,6 @@ if __name__ == "__main__":
     out = dr.start_traffic(context)
     # out = dr.stop_traffic(context)
     # out = dr.get_results(context)
+    # out = dr.cleanup_reservation(context)
 
     print(out)
