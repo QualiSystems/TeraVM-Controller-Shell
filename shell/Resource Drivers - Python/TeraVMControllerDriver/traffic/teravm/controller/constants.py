@@ -6,5 +6,5 @@ TEST_AGENT_NUMBER = "1"  # todo: clarify hardcode it or add another resource
 CS_TEST_RESULTS_ATTACHMENTS_FILE = "Test Group Results.zip"
 
 PORT_MODELS = ["Generic Traffic Generator Port"]
-CHASSIS_MODELS = ["TeraVM Chassis"]
+CHASSIS_MODELS = ["TeraVM Chassis", "Traffic TeraVM 2G"]
 PORT_LOGICAL_NAME_ATTR = "Logical Name"
