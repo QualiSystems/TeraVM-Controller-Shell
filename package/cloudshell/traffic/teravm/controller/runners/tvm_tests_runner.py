@@ -1,7 +1,8 @@
-from traffic.teravm.controller.cli.ctrl_handler import TeraVMControllerCliHandler
-from traffic.teravm.controller.flows.start_tests_flow import TeraVMStartTestsFlow
-from traffic.teravm.controller.flows.stop_tests_flow import TeraVMStopTestsFlow
-from traffic.teravm.controller.constants import TEST_GROUP_NAME
+from cloudshell.traffic.teravm.cli.ctrl_handler import TeraVMControllerCliHandler
+
+from cloudshell.traffic.teravm.controller import TEST_GROUP_NAME
+from cloudshell.traffic.teravm.controller import TeraVMStartTestsFlow
+from cloudshell.traffic.teravm.controller import TeraVMStopTestsFlow
 
 
 class TeraVMTestsRunner(object):

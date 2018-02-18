@@ -3,8 +3,8 @@ import tempfile
 from cloudshell.cli.command_template.command_template_executor import CommandTemplateExecutor
 from scp import SCPClient
 
-from traffic.teravm.controller.cli import ctrl_command_templates
-from traffic.teravm.controller import constants
+from cloudshell.traffic.teravm.cli import ctrl_command_templates
+from cloudshell.traffic.teravm.controller import constants
 
 
 class TeraVMGetResultsFlow(object):

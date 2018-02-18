@@ -7,14 +7,18 @@ with open(os.path.join('version.txt')) as version_file:
 with open('requirements.txt') as f_required:
     required = f_required.read().splitlines()
 
+with open('test_requirements.txt') as f_tests:
+    required_for_tests = f_tests.read().splitlines()
 
 setup(
-    name='cloudshell-traffic-teravm-controller',
-    url='https://github.com/QualiSystems/TeraVM-Controller-Shell',
+    name='cloudshell-tg-teravm-controller',
+    url='https://github.com/QualiSystems/cloudshell-tg-teravm-controller',
     author='QualiSystems',
     author_email='info@qualisystems.com',
     packages=find_packages(),
     install_requires=required,
+    test_suite='tests',
+    tests_require=required_for_tests,
     version=version_from_file,
     description='QualiSystems Python package',
     include_package_data=True)

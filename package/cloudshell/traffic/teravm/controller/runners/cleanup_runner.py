@@ -1,6 +1,7 @@
-from traffic.teravm.controller.cli.ctrl_handler import TeraVMControllerCliHandler
-from traffic.teravm.controller.flows.cleanup_flow import TeraVMCleanupFlow
-from traffic.teravm.controller.constants import TEST_GROUP_NAME
+from cloudshell.traffic.teravm.cli.ctrl_handler import TeraVMControllerCliHandler
+
+from cloudshell.traffic.teravm.controller.flows.cleanup_flow import TeraVMCleanupFlow
+from cloudshell.traffic.teravm.controller.constants import TEST_GROUP_NAME
 
 
 class TeraVMCleanupRunner(object):

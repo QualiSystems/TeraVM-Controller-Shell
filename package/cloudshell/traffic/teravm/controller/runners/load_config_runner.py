@@ -1,5 +1,6 @@
-from traffic.teravm.controller.cli.ctrl_handler import TeraVMControllerCliHandler
-from traffic.teravm.controller.flows.load_configuration_file_flow import TeraVMLoadConfigurationFlow
+from cloudshell.traffic.teravm.cli.ctrl_handler import TeraVMControllerCliHandler
+
+from cloudshell.traffic.teravm.controller import TeraVMLoadConfigurationFlow
 
 
 class TeraVMLoadConfigurationRunner(object):

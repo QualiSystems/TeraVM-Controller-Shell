@@ -5,12 +5,12 @@ from cloudshell.devices.driver_helper import get_logger_with_thread_id
 from cloudshell.shell.core.driver_context import AutoLoadDetails
 from cloudshell.shell.core.resource_driver_interface import ResourceDriverInterface
 
-from traffic.teravm.controller.configuration_attributes_structure import TrafficGeneratorControllerResource
-from traffic.teravm.controller.runners.load_config_runner import TeraVMLoadConfigurationRunner
-from traffic.teravm.controller.runners.tvm_tests_runner import TeraVMTestsRunner
-from traffic.teravm.controller.runners.results_runner import TeraVMResultsRunner
-from traffic.teravm.controller.runners.cleanup_runner import TeraVMCleanupRunner
-from traffic.teravm.controller.quali_rest_api_helper import create_quali_api_instance
+from cloudshell.traffic.teravm.controller.configuration_attributes_structure import TrafficGeneratorControllerResource
+from cloudshell.traffic.teravm.controller.quali_rest_api_helper import create_quali_api_instance
+from cloudshell.traffic.teravm.controller.runners import TeraVMCleanupRunner
+from cloudshell.traffic.teravm.controller.runners import TeraVMLoadConfigurationRunner
+from cloudshell.traffic.teravm.controller.runners import TeraVMResultsRunner
+from cloudshell.traffic.teravm.controller.runners import TeraVMTestsRunner
 
 
 class TeraVMControllerDriver(ResourceDriverInterface):

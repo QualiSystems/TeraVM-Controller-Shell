@@ -1,20 +1,24 @@
 import re
 
-from traffic.teravm.controller import constants
+from cloudshell.traffic.teravm.controller import constants
 
 
 class TrafficGeneratorControllerResource(object):
-    def __init__(self, address=None, test_user=None, shell_name=None, attributes=None):
+    def __init__(self, address=None, test_user=None, user=None, password=None, shell_name=None, attributes=None):
         """
 
         :param str address: IP address of the resource
         :param str shell_name: shell name
-        :param str test_user: shell name
+        :param str test_user: test user for running tests
+        :param str user: controller CLI user
+        :param str password: controller CLI password
         :param dict[str, str] attributes: attributes of the resource
         """
         self.address = address
         self.test_user = test_user
         self.attributes = attributes or {}
+        self.user = user
+        self.password = password
 
         if shell_name:
             self.namespace_prefix = "{}.".format(shell_name)
@@ -22,28 +26,12 @@ class TrafficGeneratorControllerResource(object):
             self.namespace_prefix = ""
 
     @property
-    def user(self):
-        """
-
-        :rtype: str
-        """
-        return self.attributes.get("{}User".format(self.namespace_prefix), None)
-
-    @property
-    def password(self):
-        """
-
-        :rtype: string
-        """
-        return self.attributes.get("{}Password".format(self.namespace_prefix), None)
-
-    @property
     def cli_connection_type(self):
         """
 
         :rtype: str
         """
-        return self.attributes.get("{}CLI Connection Type".format(self.namespace_prefix), None)
+        return constants.CLI_CONNECTION_TYPE
 
     @property
     def cli_tcp_port(self):
@@ -51,7 +39,7 @@ class TrafficGeneratorControllerResource(object):
 
         :rtype: str
         """
-        return self.attributes.get("{}CLI TCP Port".format(self.namespace_prefix), None)
+        return constants.CLI_TCP_PORT
 
     @property
     def sessions_concurrency_limit(self):
@@ -59,7 +47,7 @@ class TrafficGeneratorControllerResource(object):
 
         :rtype: float
         """
-        return self.attributes.get("{}Sessions Concurrency Limit".format(self.namespace_prefix), 1)
+        return constants.SESSIONS_CONCURRENCY_LIMIT
 
     @property
     def test_files_location(self):
@@ -70,7 +58,7 @@ class TrafficGeneratorControllerResource(object):
         return self.attributes.get("{}Test Files Location".format(self.namespace_prefix), "")
 
     @staticmethod
-    def get_test_user(reservation_id):
+    def _get_test_user(reservation_id):
         """Get valid test username based on reservation id
 
         :param str reservation_id:
@@ -79,7 +67,18 @@ class TrafficGeneratorControllerResource(object):
         return re.sub("[^0-9a-zA-Z]", "", reservation_id)[:32]
 
     @staticmethod
-    def get_chassis_model(cs_api, reservation_id):
+    def _get_resource_attribute_value(resource, attribute_name):
+        """
+
+        :param resource cloudshell.api.cloudshell_api.ResourceInfo:
+        :param str attribute_name:
+        """
+        for attribute in resource.ResourceAttributes:
+            if attribute.Name.lower() == attribute_name.lower():
+                return attribute.Value
+
+    @staticmethod
+    def _get_chassis_model(cs_api, reservation_id):
         """
 
         :param cs_api:
@@ -110,9 +109,13 @@ class TrafficGeneratorControllerResource(object):
         :rtype: TrafficGeneratorControllerResource
         """
         reservation_id = context.reservation.reservation_id
-        chassis_resource = cls.get_chassis_model(cs_api=cs_api, reservation_id=reservation_id)
-        test_user = cls.get_test_user(reservation_id)
+        test_user = cls._get_test_user(reservation_id)
+        chassis_resource = cls._get_chassis_model(cs_api=cs_api, reservation_id=reservation_id)
+        user = cls._get_resource_attribute_value(resource=chassis_resource, attribute_name="User")
+        password = cls._get_resource_attribute_value(resource=chassis_resource, attribute_name="Password")
 
         return cls(address=chassis_resource.FullAddress,
                    test_user=test_user,
+                   user=user,
+                   password=password,
                    attributes=dict(context.resource.attributes))

@@ -1,9 +1,9 @@
 from cloudshell.cli.command_template.command_template_executor import CommandTemplateExecutor
 
-from traffic.teravm.controller.cli import ctrl_command_templates
+from cloudshell.traffic.teravm.cli import ctrl_command_templates
 
 
-class TeraVMStartTestsFlow(object):
+class TeraVMStopTestsFlow(object):
     def __init__(self, cli_handler):
         """
 
@@ -20,6 +20,7 @@ class TeraVMStartTestsFlow(object):
         """
         with self._cli_handler.get_cli_service(self._cli_handler.cli_mode) as session:
             command = CommandTemplateExecutor(cli_service=session,
-                                              command_template=ctrl_command_templates.START_TEST_GROUP)
+                                              command_template=ctrl_command_templates.STOP_TEST_GROUP)
 
             return command.execute_command(test_group_name=test_group_name, user=user)
+

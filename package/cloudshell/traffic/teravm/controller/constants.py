@@ -1,3 +1,7 @@
+CLI_CONNECTION_TYPE = "SSH"
+CLI_TCP_PORT = 22
+SESSIONS_CONCURRENCY_LIMIT = 1
+
 TEST_GROUP_NAME = "CS_TEST_GROUP"
 TEST_GROUP_FILE = "/home/cli/cs_test_group_{}.xml"  # todo: remove "cli" from path, it may differ
 TEST_RESULTS_FILE = "/home/cli/cs_test_result_{}.zip"

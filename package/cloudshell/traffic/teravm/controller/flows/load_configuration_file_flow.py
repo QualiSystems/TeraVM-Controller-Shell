@@ -6,8 +6,9 @@ from scp import SCPClient
 from xml.etree import ElementTree
 from traffic.teravm.controller.cli import ctrl_command_templates
 from cloudshell.cli.command_template.command_template_executor import CommandTemplateExecutor
-from traffic.teravm.controller import exceptions
-from traffic.teravm.controller import constants
+from cloudshell.traffic.teravm import exceptions
+
+from cloudshell.traffic.teravm.controller import constants
 
 
 class TeraVMLoadConfigurationFlow(object):
