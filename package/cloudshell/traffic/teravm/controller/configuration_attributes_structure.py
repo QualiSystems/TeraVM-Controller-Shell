@@ -87,7 +87,7 @@ class TrafficGeneratorControllerResource(object):
         """
         for resource in cs_api.GetReservationDetails(reservationId=reservation_id).ReservationDescription.Resources:
             if resource.ResourceModelName in constants.CHASSIS_MODELS:
-                return resource
+                return cs_api.GetResourceDetails(resource.Name)
 
         raise Exception("Unable to find {} model in the current reservation".format(constants.CHASSIS_MODELS))
 

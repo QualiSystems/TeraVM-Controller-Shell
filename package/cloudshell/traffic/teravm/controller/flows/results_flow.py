@@ -11,7 +11,7 @@ class TeraVMGetResultsFlow(object):
     def __init__(self, cli_handler, quali_api_client, reservation_id):
         """
 
-        :param traffic.teravm.controller.cli.ctrl_handler.TeraVMControllerCliHandler cli_handler:
+        :param traffic.teravm.cli.ctrl_handler.TeraVMControllerCliHandler cli_handler:
         :param traffic.teravm.quali_rest_api_helper.QualiAPIHelper quali_api_client:
         :param str reservation_id:
         """

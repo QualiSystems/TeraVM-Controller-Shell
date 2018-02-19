@@ -7,7 +7,7 @@ class TeraVMStartTestsFlow(object):
     def __init__(self, cli_handler):
         """
 
-        :param traffic.teravm.controller.cli.ctrl_handler.TeraVMControllerCliHandler cli_handler:
+        :param traffic.teravm.cli.ctrl_handler.TeraVMControllerCliHandler cli_handler:
         """
         self._cli_handler = cli_handler
 

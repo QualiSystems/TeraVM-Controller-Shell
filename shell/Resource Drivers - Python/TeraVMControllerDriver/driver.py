@@ -7,10 +7,10 @@ from cloudshell.shell.core.resource_driver_interface import ResourceDriverInterf
 
 from cloudshell.traffic.teravm.controller.configuration_attributes_structure import TrafficGeneratorControllerResource
 from cloudshell.traffic.teravm.controller.quali_rest_api_helper import create_quali_api_instance
-from cloudshell.traffic.teravm.controller.runners import TeraVMCleanupRunner
-from cloudshell.traffic.teravm.controller.runners import TeraVMLoadConfigurationRunner
-from cloudshell.traffic.teravm.controller.runners import TeraVMResultsRunner
-from cloudshell.traffic.teravm.controller.runners import TeraVMTestsRunner
+from cloudshell.traffic.teravm.controller.runners.cleanup_runner import TeraVMCleanupRunner
+from cloudshell.traffic.teravm.controller.runners.load_config_runner import TeraVMLoadConfigurationRunner
+from cloudshell.traffic.teravm.controller.runners.results_runner import TeraVMResultsRunner
+from cloudshell.traffic.teravm.controller.runners.tvm_tests_runner import TeraVMTestsRunner
 
 
 class TeraVMControllerDriver(ResourceDriverInterface):

@@ -4,7 +4,7 @@ import re
 
 from scp import SCPClient
 from xml.etree import ElementTree
-from traffic.teravm.controller.cli import ctrl_command_templates
+from cloudshell.traffic.teravm.cli import ctrl_command_templates
 from cloudshell.cli.command_template.command_template_executor import CommandTemplateExecutor
 from cloudshell.traffic.teravm import exceptions
 
@@ -15,7 +15,7 @@ class TeraVMLoadConfigurationFlow(object):
     def __init__(self, cli_handler, resource_config, cs_api, reservation_id, logger):
         """
 
-        :param traffic.teravm.controller.cli.ctrl_handler.TeraVMControllerCliHandler cli_handler:
+        :param traffic.teravm.cli.ctrl_handler.TeraVMControllerCliHandler cli_handler:
         :param traffic.teravm.controller.configuration_attributes_structure.TrafficGeneratorControllerResource resource_config:
         :param str reservation_id:
         :param logging.Logger logger:
