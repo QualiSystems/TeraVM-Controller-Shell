@@ -36,17 +36,24 @@ class TeraVMLoadConfigurationFlow(object):
         port_pattern = r'{}/M(?P<module>\d+)/P(?P<port>\d+)'.format(self._resource_config.address)
 
         for resource in resources:
-            if resource.ResourceModelName in constants.PORT_MODELS:
-                result = re.search(port_pattern, resource.FullAddress)
-                if result:
-                    logical_name = self._cs_api.GetAttributeValue(resourceFullPath=resource.Name,
-                                                                  attributeName=constants.PORT_LOGICAL_NAME_ATTR).Value
-                    if logical_name:
-                        interface_id = "/".join([result.group('module'),
-                                                 constants.TEST_AGENT_NUMBER,
-                                                 result.group('port')])
+            if resource.ResourceModelName == constants.PORT_MODEL_2G:
+                logical_name_attr = constants.PORT_LOGICAL_NAME_ATTR_2G
+            elif resource.ResourceModelName == constants.PORT_MODEL_1G:
+                logical_name_attr = constants.PORT_LOGICAL_NAME_ATTR_1G
+            else:
+                continue
 
-                        ports[logical_name] = interface_id
+            result = re.search(port_pattern, resource.FullAddress)
+
+            if result:
+                logical_name = self._cs_api.GetAttributeValue(resourceFullPath=resource.Name,
+                                                              attributeName=logical_name_attr).Value
+                if logical_name:
+                    interface_id = "/".join([result.group('module'),
+                                             constants.TEST_AGENT_NUMBER,
+                                             result.group('port')])
+
+                    ports[logical_name] = interface_id
         return ports
 
     def execute_flow(self, file_path):
