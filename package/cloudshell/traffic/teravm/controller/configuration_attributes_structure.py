@@ -67,14 +67,15 @@ class TrafficGeneratorControllerResource(object):
         return re.sub("[^0-9a-zA-Z]", "", reservation_id)[:32]
 
     @staticmethod
-    def _get_resource_attribute_value(resource, attribute_name):
+    def _get_resource_attribute_value(resource, attribute_name, namespace_prefix):
         """
 
         :param resource cloudshell.api.cloudshell_api.ResourceInfo:
         :param str attribute_name:
         """
         for attribute in resource.ResourceAttributes:
-            if attribute.Name.lower() == attribute_name.lower():
+            if attribute.Name.lower() == "{namespace}{attribute_name}".format(namespace=namespace_prefix,
+                                                                              attribute_name=attribute_name).lower():
                 return attribute.Value
 
     @staticmethod
@@ -111,8 +112,19 @@ class TrafficGeneratorControllerResource(object):
         reservation_id = context.reservation.reservation_id
         test_user = cls._get_test_user(reservation_id)
         chassis_resource = cls._get_chassis_model(cs_api=cs_api, reservation_id=reservation_id)
-        user = cls._get_resource_attribute_value(resource=chassis_resource, attribute_name="User")
-        password = cls._get_resource_attribute_value(resource=chassis_resource, attribute_name="Password")
+
+        if chassis_resource.ResourceModelName == constants.CHASSIS_MODEL_2G:
+            namespace_prefix = "{}.".format(chassis_resource.ResourceModelName)
+        else:
+            namespace_prefix = ""
+
+        user = cls._get_resource_attribute_value(resource=chassis_resource,
+                                                 attribute_name="User",
+                                                 namespace_prefix=namespace_prefix)
+
+        password = cls._get_resource_attribute_value(resource=chassis_resource,
+                                                     attribute_name="Password",
+                                                     namespace_prefix=namespace_prefix)
 
         return cls(address=chassis_resource.FullAddress,
                    test_user=test_user,
