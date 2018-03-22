@@ -39,8 +39,21 @@
                 <Rule Name="Configuration"/>
             </Rules>
         </AttributeInfo>
+        <AttributeInfo DefaultValue="" Description="TeraVM Test User for Open Automation Authorization"
+                       IsReadOnly="false"
+                       Name="Test User" Type="String">
+            <Rules>
+                <Rule Name="Configuration"/>
+            </Rules>
+        </AttributeInfo>
+        <AttributeInfo DefaultValue="" Description="TeraVM Test User for Open Automation Authorization"
+                       IsReadOnly="false"
+                       Name="Test User Password" Type="Password">
+            <Rules>
+                <Rule Name="Configuration"/>
+            </Rules>
+        </AttributeInfo>
     </Attributes>
-
     <ResourceFamilies>
         <ResourceFamily Description="" IsService="true" Name="Traffic Generator Controller" ServiceType="Regular">
             <Models>
@@ -62,6 +75,13 @@
                             <AllowedValues/>
                         </AttachedAttribute>
                         <AttachedAttribute IsLocal="true" IsOverridable="true" Name="Controller TCP Port"
+                                           UserInput="true">
+                            <AllowedValues/>
+                        </AttachedAttribute>
+                        <AttachedAttribute IsLocal="true" IsOverridable="true" Name="Test User" UserInput="true">
+                            <AllowedValues/>
+                        </AttachedAttribute>
+                        <AttachedAttribute IsLocal="true" IsOverridable="true" Name="Test User Password"
                                            UserInput="true">
                             <AllowedValues/>
                         </AttachedAttribute>

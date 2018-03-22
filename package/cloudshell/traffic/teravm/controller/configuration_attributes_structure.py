@@ -4,18 +4,20 @@ from cloudshell.traffic.teravm.controller import constants
 
 
 class TrafficGeneratorControllerResource(object):
-    def __init__(self, address=None, test_user=None, user=None, password=None, shell_name=None, attributes=None):
+    def __init__(self, address=None, default_test_user=None, user=None, password=None, shell_name=None,
+                 attributes=None):
         """
 
         :param str address: IP address of the resource
         :param str shell_name: shell name
-        :param str test_user: test user for running tests
+        :param str default_test_user: test user for running tests (will be used in case when "Test User" attr
+        is not provided)
         :param str user: controller CLI user
         :param str password: controller CLI password
         :param dict[str, str] attributes: attributes of the resource
         """
         self.address = address
-        self.test_user = test_user
+        self.default_test_user = default_test_user
         self.attributes = attributes or {}
         self.user = user
         self.password = password
@@ -57,8 +59,24 @@ class TrafficGeneratorControllerResource(object):
         """
         return self.attributes.get("{}Test Files Location".format(self.namespace_prefix), "")
 
+    @property
+    def test_user(self):
+        """
+
+        :rtype: float
+        """
+        return self.attributes.get("{}Test User".format(self.namespace_prefix), self.default_test_user)
+
+    @property
+    def test_user_password(self):
+        """
+
+        :rtype: float
+        """
+        return self.attributes.get("{}Test User Password".format(self.namespace_prefix), "")
+
     @staticmethod
-    def _get_test_user(reservation_id):
+    def _get_default_test_user(reservation_id):
         """Get valid test username based on reservation id
 
         :param str reservation_id:
@@ -110,7 +128,7 @@ class TrafficGeneratorControllerResource(object):
         :rtype: TrafficGeneratorControllerResource
         """
         reservation_id = context.reservation.reservation_id
-        test_user = cls._get_test_user(reservation_id)
+        default_test_user = cls._get_default_test_user(reservation_id)
         chassis_resource = cls._get_chassis_model(cs_api=cs_api, reservation_id=reservation_id)
 
         if chassis_resource.ResourceModelName == constants.CHASSIS_MODEL_2G:
@@ -127,7 +145,7 @@ class TrafficGeneratorControllerResource(object):
                                                      namespace_prefix=namespace_prefix)
 
         return cls(address=chassis_resource.FullAddress,
-                   test_user=test_user,
+                   default_test_user=default_test_user,
                    user=user,
                    password=password,
                    attributes=dict(context.resource.attributes))

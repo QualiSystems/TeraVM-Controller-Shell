@@ -180,7 +180,7 @@ if __name__ == "__main__":
     import mock
     from cloudshell.shell.core.context import ResourceCommandContext, ResourceContextDetails, ReservationContextDetails
 
-    address = '192.168.42.216'
+    address = '192.168.42.208'
 
     user = 'cli'
     password = 'diversifEye'
@@ -193,7 +193,7 @@ if __name__ == "__main__":
     context.resource.name = 'dsada'
     context.resource.fullname = 'TestAireOS'
     context.reservation = ReservationContextDetails()
-    context.reservation.reservation_id = '7ae6d4ac-4b7b-4e13-a52e-1d15f05af42e'
+    context.reservation.reservation_id = 'bea26e1a-9557-4204-8a51-8adf83f3fbd2'
     context.resource.attributes = {}
     context.resource.attributes['User'] = user
     context.resource.attributes['Password'] = password
@@ -204,7 +204,7 @@ if __name__ == "__main__":
     context.resource.address = address
 
     context.connectivity = mock.MagicMock()
-    context.connectivity.server_address = "192.168.85.11"
+    context.connectivity.server_address = "192.168.85.9"
 
     dr = TeraVMControllerDriver()
     dr.initialize(context)
@@ -212,8 +212,8 @@ if __name__ == "__main__":
     # with mock.patch('__main__.get_api') as get_api:
     #     get_api.return_value = type('api', (object,), {
     #         'DecryptPassword': lambda self, pw: type('Password', (object,), {'Value': pw})()})()
-    #
-    #     # out = dr.get_inventory(context)
+
+        # out = dr.start_traffic(context)
     #     #
     #     # for xx in out.resources:
     #     #     print xx.__dict__
