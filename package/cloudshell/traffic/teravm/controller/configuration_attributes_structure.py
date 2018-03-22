@@ -65,7 +65,7 @@ class TrafficGeneratorControllerResource(object):
 
         :rtype: float
         """
-        return self.attributes.get("{}Test User".format(self.namespace_prefix), self.default_test_user)
+        return self.attributes.get("{}Test User".format(self.namespace_prefix)) or self.default_test_user
 
     @property
     def test_user_password(self):
