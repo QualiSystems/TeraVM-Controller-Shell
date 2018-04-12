@@ -57,7 +57,7 @@
     <ResourceFamilies>
         <ResourceFamily Description="" IsService="true" Name="Traffic Generator Controller" ServiceType="Regular">
             <Models>
-                <ResourceModel Description="TeraVM controller" Name="TeraVM Controller"
+                <ResourceModel Description="TeraVM Traffic Generator Controller" Name="TeraVM Traffic Generator Controller"
                                SupportsConcurrentCommands="true">
                     <AttachedAttributes>
                         <AttachedAttribute IsLocal="true" IsOverridable="true" Name="Test Files Location"
