@@ -39,7 +39,7 @@ class TeraVMControllerDriver(ResourceDriverInterface):
         """
         return AutoLoadDetails([], [])
 
-    def load_config(self, context, config_file_location):
+    def load_config(self, context, config_file_location, use_ports_from_reservation):
         """Load configuration file and reserve ports
 
         :param context: 
@@ -61,7 +61,8 @@ class TeraVMControllerDriver(ResourceDriverInterface):
                                                              reservation_id=reservation_id,
                                                              logger=logger)
 
-            response = load_conf_runner.load_configuration(config_file_location)
+            response = load_conf_runner.load_configuration(test_file_path=config_file_location,
+                                                           use_ports_from_reservation=use_ports_from_reservation)
             logger.info('Load configuration command ended')
 
             return response
@@ -209,9 +210,9 @@ if __name__ == "__main__":
     dr = TeraVMControllerDriver()
     dr.initialize(context)
 
-    # with mock.patch('__main__.get_api') as get_api:
-    #     get_api.return_value = type('api', (object,), {
-    #         'DecryptPassword': lambda self, pw: type('Password', (object,), {'Value': pw})()})()
+    with mock.patch('__main__.get_api') as get_api:
+        get_api.return_value = type('api', (object,), {
+            'DecryptPassword': lambda self, pw: type('Password', (object,), {'Value': pw})()})()
 
         # out = dr.start_traffic(context)
     #     #
@@ -231,10 +232,74 @@ if __name__ == "__main__":
     # for xx in out.resources:
     #     print xx.__dict__
 
-    # out = dr.load_config(context, "CS_TEST.xml")
-    out = dr.start_traffic(context)
+    path = "ftp://speedtest.tele2.net/vyos-test.config.boot"  # fail
+    path = "scp://vyos:vyos@192.168.42.157/copied_file_11.boot"  # fail
+    path = "scp://root:Password1@192.168.42.252/root/copied_file_11.boot"  # good
+   # path = "https://raw.githubusercontent.com/QualiSystems/TeraVM-Controller-Shell/master/CS_TEST.xml"
+    path = "ftp://speedtest.tele2.net/2MB.zip"  # good upload/fail commit
+    #path = "ftp://us:pass@speedtest.tele2.net/2MB.zip"  # good upload/fail commit
+
+
+
+
+    def _download_file(self, file_path):
+        """
+
+        :param file_path:
+        :return:
+        """
+        import urllib
+        import ftplib
+        import tempfile
+        from cloudshell.devices.networking_utils import UrlParser
+
+        full_path_dict = UrlParser().parse_url(file_path)
+        print full_path_dict
+
+        protocol = full_path_dict.get(UrlParser.SCHEME)
+        address = full_path_dict.get(UrlParser.HOSTNAME)
+        username = full_path_dict.get(UrlParser.USERNAME)
+        password = full_path_dict.get(UrlParser.PASSWORD)
+        port = full_path_dict.get(UrlParser.PORT)
+        path = full_path_dict.get(UrlParser.PATH)
+        filename = full_path_dict.get(UrlParser.FILENAME)
+
+        if protocol.startswith("http"):
+            tmp_file, _ = urllib.urlretrieve(path)
+
+        elif protocol == "ftp":
+            ftp = ftplib.FTP()
+            ftp.connect(host=address, port=port)
+            ftp.login(user=username, passwd=password)
+            ftp.cwd(path)
+
+            tmp_file = tempfile.NamedTemporaryFile(delete=False)
+
+            try:
+                ftp.retrbinary("RETR " + filename, tmp_file.write)
+            except:
+                raise Exception("Unable to download configuration file via FTP")
+
+            tmp_file = tmp_file.name
+
+        elif protocol.startswith("sftp"):
+            pass
+
+        elif protocol.startswith("scp"):
+            pass
+
+        else:
+            raise Exception("Unable to download configuration file '{}'. Invalid protocol type '{}'"
+                            .format(file_path, protocol))
+
+        return tmp_file
+
+    out = _download_file(1, path)
+    #out = dr.load_config(context, path, False)
+    # out = dr.start_traffic(context)
     # out = dr.stop_traffic(context)
     # out = dr.get_results(context)
     # out = dr.cleanup_reservation(context)
 
     print(out)
+    import ipdb;ipdb.set_trace()

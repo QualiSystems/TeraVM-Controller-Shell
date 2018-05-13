@@ -9,7 +9,11 @@
             <Parameters>
                 <Parameter Name="config_file_location" Type="String" Mandatory="True"
                            DisplayName="TeraVM config file"
-                           Description="Full path to TeraVM test configuration file"/>
+                           Description="Path to the configuration file, including the configuration file name. Path should include the protocol type (for example 'tftp://10.10.10.10/asdf')"/>
+                <Parameter Name="use_ports_from_reservation" Type="Lookup" Mandatory="False" AllowedValues="True,False"
+                           DisplayName="Use ports from reservation" Description="Update configuration file with ports from the current
+                           reservation by their 'Logical Name' attributes"
+                           DefaultValue="False"/>
             </Parameters>
         </Command>
         <Command Name="start_traffic" DisplayName="Start Traffic" Description="STart test for current configuration">

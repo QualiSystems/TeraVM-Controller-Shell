@@ -6,6 +6,7 @@ from scp import SCPClient
 from xml.etree import ElementTree
 from cloudshell.traffic.teravm.cli import ctrl_command_templates
 from cloudshell.cli.command_template.command_template_executor import CommandTemplateExecutor
+from cloudshell.devices.networking_utils import UrlParser
 from cloudshell.traffic.teravm import exceptions
 
 from cloudshell.traffic.teravm.controller import constants
@@ -56,19 +57,19 @@ class TeraVMLoadConfigurationFlow(object):
                     ports[logical_name] = interface_id
         return ports
 
-    def execute_flow(self, file_path):
+    def execute_flow(self, file_path, use_ports_from_reservation):
         """
 
         :param str file_path: filename or full path to file
+        :param bool use_ports_from_reservation:
         :return:
         """
-        available_ports = self._get_ports_from_reservation()
+        if use_ports_from_reservation:
+            available_ports = self._get_ports_from_reservation()
+            temp_file_path = self._prepare_temp_test_file(file_path=file_path,
+                                                          available_ports=available_ports)
 
-        file_path = self._get_test_file_path(file_path)
-        temp_file_path = self._prepare_temp_test_file(file_path=file_path,
-                                                      available_ports=available_ports)
-
-        test_group_file = constants.TEST_GROUP_FILE.format(self._resource_config.test_user)
+            test_group_file = constants.TEST_GROUP_FILE.format(self._resource_config.test_user)
 
         with self._cli_handler.get_cli_service(self._cli_handler.default_mode) as session:
             scp = SCPClient(session.session._handler.get_transport())
