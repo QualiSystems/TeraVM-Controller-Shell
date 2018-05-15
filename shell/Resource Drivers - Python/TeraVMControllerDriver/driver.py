@@ -48,6 +48,7 @@ class TeraVMControllerDriver(ResourceDriverInterface):
         """
         logger = get_logger_with_thread_id(context)
         logger.info('Load configuration command started')
+        use_ports_from_reservation = use_ports_from_reservation.lower() == "true"
 
         with ErrorHandlingContext(logger):
             cs_api = get_api(context)
@@ -181,7 +182,7 @@ if __name__ == "__main__":
     import mock
     from cloudshell.shell.core.context import ResourceCommandContext, ResourceContextDetails, ReservationContextDetails
 
-    address = '192.168.42.208'
+    address = '192.168.42.171'
 
     user = 'cli'
     password = 'diversifEye'
@@ -194,9 +195,10 @@ if __name__ == "__main__":
     context.resource.name = 'dsada'
     context.resource.fullname = 'TestAireOS'
     context.reservation = ReservationContextDetails()
-    context.reservation.reservation_id = 'bea26e1a-9557-4204-8a51-8adf83f3fbd2'
+    context.reservation.reservation_id = '559a65ef-962d-4495-a575-f6b0eb95f7af'
     context.resource.attributes = {}
     context.resource.attributes['User'] = user
+    context.resource.attributes['Test User Password'] = ""
     context.resource.attributes['Password'] = password
     context.resource.attributes["CLI TCP Port"] = 22
     context.resource.attributes["CLI Connection Type"] = "ssh"
@@ -205,7 +207,7 @@ if __name__ == "__main__":
     context.resource.address = address
 
     context.connectivity = mock.MagicMock()
-    context.connectivity.server_address = "192.168.85.9"
+    context.connectivity.server_address = "192.168.85.7"
 
     dr = TeraVMControllerDriver()
     dr.initialize(context)
@@ -214,92 +216,26 @@ if __name__ == "__main__":
         get_api.return_value = type('api', (object,), {
             'DecryptPassword': lambda self, pw: type('Password', (object,), {'Value': pw})()})()
 
-        # out = dr.start_traffic(context)
-    #     #
-    #     # for xx in out.resources:
-    #     #     print xx.__dict__
-    #
-    #     out = dr.load_config(context, "TestConfig.xml")
-    #
-    #     print(out)
+    scp_path = "scp://vyos:vyos@192.168.42.157/copied_file_11.boot"  # fail
+    scp_path = "scp://root:Password1@192.168.42.252/root/copied_file_11.boot"  # good
 
-    # with mock.patch('__main__.get_api') as get_api:
-    #     get_api.return_value = type('api', (object,), {
-    #         'DecryptPassword': lambda self, pw: type('Password', (object,), {'Value': pw})()})()
+    http_path = "https://raw.githubusercontent.com/QualiSystems/TeraVM-Controller-Shell/master/CS_TEST.xml"  # good
+    http_path1 = "https://raw.githubusercontent.com/QualiSystems/TeraVM-Controller-Shell/master/NO_FILE.xml"   # fail 404
+    http_path2 = "https://raw.githubuserconadaddtentdadadad.com/Qualisss/master/CS_TEST.xml"  # fail 500
 
-        # out = dr.get_inventory(context)
-    #
-    # for xx in out.resources:
-    #     print xx.__dict__
+    ftp_path = "ftp://speedtest.tele2.net/2MB.zip"  # good upload/fail commit
+    ftp_path1 = "ftp://us:pass@speedtest.tele2.net/2MB.zip"  # good upload/fail commit
 
-    path = "ftp://speedtest.tele2.net/vyos-test.config.boot"  # fail
-    path = "scp://vyos:vyos@192.168.42.157/copied_file_11.boot"  # fail
-    path = "scp://root:Password1@192.168.42.252/root/copied_file_11.boot"  # good
-   # path = "https://raw.githubusercontent.com/QualiSystems/TeraVM-Controller-Shell/master/CS_TEST.xml"
-    path = "ftp://speedtest.tele2.net/2MB.zip"  # good upload/fail commit
-    #path = "ftp://us:pass@speedtest.tele2.net/2MB.zip"  # good upload/fail commit
+    sftp_path = "sftp://anthony:qaz@localhost/home/anthony/models_parser.py"
+    sftp_path1 = "sftp://anthonyadd:qaz@localhost/home/anthony/models_parser.py"
 
+    scp_path = "scp://anthony:qaz@localhost/home/anthony/models_parser.py"  # good
+    scp_path1 = "scp://anthonyadadd:qaz@localhost/home/anthony/models_parser.py"  # good
 
-
-
-    def _download_file(self, file_path):
-        """
-
-        :param file_path:
-        :return:
-        """
-        import urllib
-        import ftplib
-        import tempfile
-        from cloudshell.devices.networking_utils import UrlParser
-
-        full_path_dict = UrlParser().parse_url(file_path)
-        print full_path_dict
-
-        protocol = full_path_dict.get(UrlParser.SCHEME)
-        address = full_path_dict.get(UrlParser.HOSTNAME)
-        username = full_path_dict.get(UrlParser.USERNAME)
-        password = full_path_dict.get(UrlParser.PASSWORD)
-        port = full_path_dict.get(UrlParser.PORT)
-        path = full_path_dict.get(UrlParser.PATH)
-        filename = full_path_dict.get(UrlParser.FILENAME)
-
-        if protocol.startswith("http"):
-            tmp_file, _ = urllib.urlretrieve(path)
-
-        elif protocol == "ftp":
-            ftp = ftplib.FTP()
-            ftp.connect(host=address, port=port)
-            ftp.login(user=username, passwd=password)
-            ftp.cwd(path)
-
-            tmp_file = tempfile.NamedTemporaryFile(delete=False)
-
-            try:
-                ftp.retrbinary("RETR " + filename, tmp_file.write)
-            except:
-                raise Exception("Unable to download configuration file via FTP")
-
-            tmp_file = tmp_file.name
-
-        elif protocol.startswith("sftp"):
-            pass
-
-        elif protocol.startswith("scp"):
-            pass
-
-        else:
-            raise Exception("Unable to download configuration file '{}'. Invalid protocol type '{}'"
-                            .format(file_path, protocol))
-
-        return tmp_file
-
-    out = _download_file(1, path)
-    #out = dr.load_config(context, path, False)
+    out = dr.load_config(context, scp_path, "False")
     # out = dr.start_traffic(context)
     # out = dr.stop_traffic(context)
     # out = dr.get_results(context)
     # out = dr.cleanup_reservation(context)
 
     print(out)
-    import ipdb;ipdb.set_trace()

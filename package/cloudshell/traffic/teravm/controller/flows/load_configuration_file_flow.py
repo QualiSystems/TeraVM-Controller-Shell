@@ -66,15 +66,15 @@ class TeraVMLoadConfigurationFlow(object):
         """
         if use_ports_from_reservation:
             available_ports = self._get_ports_from_reservation()
-            temp_file_path = self._prepare_temp_test_file(file_path=file_path,
-                                                          available_ports=available_ports)
+            file_path = self._prepare_temp_test_file(file_path=file_path,
+                                                     available_ports=available_ports)
 
-            test_group_file = constants.TEST_GROUP_FILE.format(self._resource_config.test_user)
+        test_group_file = constants.TEST_GROUP_FILE.format(self._resource_config.test_user)
 
         with self._cli_handler.get_cli_service(self._cli_handler.default_mode) as session:
             scp = SCPClient(session.session._handler.get_transport())
 
-            scp.put(temp_file_path, test_group_file)
+            scp.put(file_path, test_group_file)
 
             with session.enter_mode(self._cli_handler.cli_mode) as cli_session:
                 try:

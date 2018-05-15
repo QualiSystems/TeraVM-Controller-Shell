@@ -58,6 +58,7 @@ class TeraVMLoadConfigurationRunner(object):
         :param bool use_ports_from_reservation:
         """
         config_file = self.download_configuration_flow.execute_flow(file_path=test_file_path)
+        self._logger.info("Downloaded Config file: {}".format(config_file))
 
         return self.upload_configuration_flow.execute_flow(file_path=config_file,
                                                            use_ports_from_reservation=use_ports_from_reservation)

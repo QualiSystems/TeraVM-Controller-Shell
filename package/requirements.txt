@@ -6,3 +6,4 @@ cloudshell-automation-api>=7.0,<7.1
 cloudshell-tg-teravm>=1.0,<1.1
 requests==2.18.4
 scp==0.10.2
+pysftp==0.2.9
