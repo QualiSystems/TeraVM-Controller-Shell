@@ -37,10 +37,10 @@ class TeraVMGetResultsFlow(object):
         with self._cli_handler.get_cli_service(self._cli_handler.default_mode) as session:
             scp = SCPClient(session.session._handler.get_transport())
 
-            tmp_file_path = tempfile.mktemp()
+            tmp_file_path = tempfile.mktemp(prefix="test_results_", suffix=".zip")
             scp.get(results_file, tmp_file_path)
 
-            with open(tmp_file_path) as tmp_results_file:
+            with open(tmp_file_path, "rb") as tmp_results_file:
                 self._quali_api_client.upload_file(self._reservation_id,
                                                    file_name=constants.CS_TEST_RESULTS_ATTACHMENTS_FILE,
                                                    file_stream=tmp_results_file)
