@@ -162,7 +162,7 @@ This HTTP Resource can only be imported by uncommenting the XML and then changin
                <route_type>None</route_type>
                <secure_s1mme_interface>false</secure_s1mme_interface>
                <layer_2_configuration>
-                  <interface>3/1/6</interface>
+                  <interface>4/1/6</interface>
                   <mac_address_assignment_mode>Use MAC of Assigned Interface</mac_address_assignment_mode>
                   <seed_mac_address/>
                   <mtu>1500</mtu>
