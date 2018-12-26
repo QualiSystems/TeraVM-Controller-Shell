@@ -4,12 +4,15 @@ from cloudshell.traffic.teravm.controller import constants
 
 
 class TrafficGeneratorControllerResource(object):
-    def __init__(self, address=None, default_test_user=None, user=None, password=None, shell_name=None,
-                 attributes=None):
+    def __init__(self, address=None, family=None, shell_type=None, shell_name=None, fullname=None, name=None,
+                 default_test_user=None, user=None, password=None, attributes=None):
         """
 
         :param str address: IP address of the resource
+        :param str family: resource family
         :param str shell_name: shell name
+        :param str fullname: full name of the resource
+        :param str name: name of the resource
         :param str default_test_user: test user for running tests (will be used in case when "Test User" attr
         is not provided)
         :param str user: controller CLI user
@@ -17,15 +20,21 @@ class TrafficGeneratorControllerResource(object):
         :param dict[str, str] attributes: attributes of the resource
         """
         self.address = address
-        self.default_test_user = default_test_user
+        self.family = family
+        self.shell_name = shell_name
+        self.fullname = fullname
+        self.name = name
         self.attributes = attributes or {}
+        self.default_test_user = default_test_user
         self.user = user
         self.password = password
 
         if shell_name:
-            self.namespace_prefix = "{}.".format(shell_name)
+            self.namespace_prefix = "{}.".format(self.shell_name)
+            self.shell_type = "{}.".format(shell_type)
         else:
             self.namespace_prefix = ""
+            self.shell_type = ""
 
     @property
     def cli_connection_type(self):
@@ -111,20 +120,30 @@ class TrafficGeneratorControllerResource(object):
         raise Exception("Unable to find {} model in the current reservation".format(constants.CHASSIS_MODELS))
 
     @classmethod
-    def from_context(cls, context):
+    def from_context(cls, context, shell_type=None, shell_name=None):
         """
 
         :param cloudshell.shell.core.driver_context.ResourceCommandContext context:
+        :param str shell_type: shell type
+        :param str shell_name: shell name
         :return:
         """
-        return cls(attributes=dict(context.resource.attributes))
+        return cls(address=context.resource.address,
+                   family=context.resource.family,
+                   shell_type=shell_type,
+                   shell_name=shell_name,
+                   fullname=context.resource.fullname,
+                   name=context.resource.name,
+                   attributes=dict(context.resource.attributes))
 
     @classmethod
-    def create_from_chassis_resource(cls, context, cs_api):
+    def create_from_chassis_resource(cls, context, cs_api, shell_type=None, shell_name=None):
         """Create an instance of TrafficGeneratorControllerResource from the given context
 
         :param cloudshell.shell.core.driver_context.ResourceCommandContext context:
         :param cs_api:
+        :param str shell_type: shell type
+        :param str shell_name: shell name
         :rtype: TrafficGeneratorControllerResource
         """
         reservation_id = context.reservation.reservation_id
@@ -145,6 +164,11 @@ class TrafficGeneratorControllerResource(object):
                                                      namespace_prefix=namespace_prefix)
 
         return cls(address=chassis_resource.FullAddress,
+                   family=context.resource.family,
+                   shell_type=shell_type,
+                   shell_name=shell_name,
+                   fullname=context.resource.fullname,
+                   name=context.resource.name,
                    default_test_user=default_test_user,
                    user=user,
                    password=password,
