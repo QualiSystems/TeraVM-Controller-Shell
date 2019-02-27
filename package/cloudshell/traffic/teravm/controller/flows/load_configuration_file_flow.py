@@ -36,13 +36,10 @@ class TeraVMLoadConfigurationFlow(object):
         resources = self._cs_api.GetReservationDetails(reservationId=self._reservation_id).ReservationDescription.Resources
         port_pattern = r'{}/M(?P<module>\d+)/P(?P<port>\d+)'.format(self._resource_config.address)
 
-        for resource in resources:
-            if resource.ResourceModelName == constants.PORT_MODEL_2G:
-                logical_name_attr = constants.PORT_LOGICAL_NAME_ATTR_2G
-            elif resource.ResourceModelName == constants.PORT_MODEL_1G:
-                logical_name_attr = constants.PORT_LOGICAL_NAME_ATTR_1G
-            else:
-                continue
+        for resource in (resource for resource in resources
+                         if resource.ResourceModelName in constants.LOGICAL_NAME_ATTR_PORT_MODEL_MAP):
+
+            logical_name_attr = constants.LOGICAL_NAME_ATTR_PORT_MODEL_MAP[resource.ResourceModelName]
 
             result = re.search(port_pattern, resource.FullAddress)
 

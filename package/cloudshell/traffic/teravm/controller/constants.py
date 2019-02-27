@@ -11,11 +11,11 @@ CS_TEST_RESULTS_ATTACHMENTS_FILE = "Test Group Results.zip"
 
 CHASSIS_MODEL_1G = "TeraVM Chassis"
 CHASSIS_MODEL_2G = "Traffic TeraVM 2G"
-CHASSIS_MODELS = [CHASSIS_MODEL_1G, CHASSIS_MODEL_2G]
+VIRTUAL_CHASSIS_MODEL_2G = "TeraVM Virtual Chassis"
+CHASSIS_MODELS = [CHASSIS_MODEL_1G, CHASSIS_MODEL_2G, VIRTUAL_CHASSIS_MODEL_2G]
 
-PORT_MODEL_1G = "TeraVM Virtual Traffic Generator Port"
-PORT_MODEL_2G = "Traffic TeraVM 2G.GenericTrafficGeneratorPort"
-PORT_MODELS = [PORT_MODEL_1G, PORT_MODEL_2G]
-
-PORT_LOGICAL_NAME_ATTR_1G = "Logical Name"
-PORT_LOGICAL_NAME_ATTR_2G = "CS_TrafficGeneratorPort.Logical Name"
+LOGICAL_NAME_ATTR_PORT_MODEL_MAP = {
+    "TeraVM Virtual Traffic Generator Port": "Logical Name",
+    "Traffic TeraVM 2G.GenericTrafficGeneratorPort": "CS_TrafficGeneratorPort.Logical Name",
+    "TeraVM Virtual Blade.VirtualTrafficGeneratorPort": "CS_VirtualTrafficGeneratorPort.Logical Name",
+}

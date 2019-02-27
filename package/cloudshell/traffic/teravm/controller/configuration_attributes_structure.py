@@ -150,7 +150,7 @@ class TrafficGeneratorControllerResource(object):
         default_test_user = cls._get_default_test_user(reservation_id)
         chassis_resource = cls._get_chassis_model(cs_api=cs_api, reservation_id=reservation_id)
 
-        if chassis_resource.ResourceModelName == constants.CHASSIS_MODEL_2G:
+        if chassis_resource.ResourceModelName in (constants.CHASSIS_MODEL_2G, constants.VIRTUAL_CHASSIS_MODEL_2G):
             namespace_prefix = "{}.".format(chassis_resource.ResourceModelName)
         else:
             namespace_prefix = ""
